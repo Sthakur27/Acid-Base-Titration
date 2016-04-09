@@ -11,19 +11,19 @@ import math
 from tkinter import *
 while True:
     alpha=Tk()
-    print("acid or base?")
+    print("acid or base?  ex. acid")
     titraty=input()
-    print("strong or weak?")
+    print("strong or weak?  ex. weak")
     strength=input()
-    print("volume of solution in ml?")
+    print("volume of solution in ml?   ex. 25")
     volume=(float(input()))/1000
-    print("what is molarity?")
-    intmolarity=float(input())
+    print("what is molarity?  ex. 0.5")
+    intmolarity=float(eval(input()))
     if strength=="weak":
         if titraty=="acid":
-            print("What is the Ka Value?")
+            print("What is the Ka Value?  ex. 6.6*10**-6")
         if titraty=="base":
-            print("What is the Kb Value?")
+            print("What is the Kb Value?  ex. 6.6*10**-6")
         kvalue=(input())
         kvalue=eval(kvalue)
         #print("kvalue =",kvalue)
@@ -44,7 +44,7 @@ while True:
     xcoord=[]
     ycoord=[]
     while vol2<therange:
-        if titraty=="acid":
+        if True:
             if strength=="strong":
     #########################################################################
                 #strong acid titrated with strong base
@@ -70,7 +70,7 @@ while True:
                     #print("At the equivalence point, pH=7")
 
                 #more moles base than acid    
-                elif molecomparison<0:
+                if molecomparison<0:
                     OHcon=(-1*molecomparison)/((vol2+volume))
                     #print(OHcon)
                     pOH=-math.log(OHcon,10)
@@ -115,11 +115,16 @@ while True:
                     #more moles acid than base
                 elif molecomparison>0:
                     #HX+OH- ->  H2O +X-     moles of X- = moles of OH-
+                    #       HX          +       NaOH-      <->     H2O     +      X-     +       + Na+
+                    #I  kv*molarity1         vol2*mol2            ~               0                0 
+                    #C  -vol2*mol2           -vol2*mol2        +vol2*mol2      +vol2*mol2         +vol2*mol2
+                    #E  kv*mol1-(vol2*mol2)     0                 ~            vol2*mol2          vol2*mol2
                     molX=(vol2*molarity2)
                     molHX=(volume*intmolarity)-(vol2*molarity2)
                     Xcon=molX/(volume+vol2)
                     HXcon=molHX/(volume+vol2)
-                    #Ka =  [X-]*[H+]/[HX]
+                    #Ka= [H+][X-]/[HX]
+                    #[H+]=Ka*[HX]/[X-]
                     Hcon=kvalue*HXcon/Xcon
                     pH=-math.log(Hcon,10)
                     #print(" pH =",pH)
@@ -133,99 +138,17 @@ while True:
                     pOH=-math.log(OHcon,10)
                     pH=14-pOH
                     #print(" pH =",pH)
-
-
-
-                    
+        if molecomparison==0:
+            ex=vol2
+            ey=pH
         if titraty=="base":
-    ###############################################################################
-            if strength=="strong":
-
-                #strong acid titrated with strong base
-                #initial pH:
-                molecomparison=(((volume)*intmolarity) - (((vol2)*molarity2)))
-                #print ("difference in moles =", molecomparison)
-
-                #initial pH
-                if molecomparison==(volume*intmolarity):
-                    a=0
-                    pOH=-math.log(intmolarity,10)
-                    pH=14-pOH
-                    #print("Before titration, pH=",pH)
-                    
-                #equivalence point
-                elif molecomparison==0:
-                    pH=7
-                    #print("At the equivalence point, pH=7")
-
-                #more moles base than acid    
-                elif molecomparison>0:
-                    OHcon=(molecomparison)/((vol2+volume))
-                    #print(OHcon)
-                    pOH=-math.log(OHcon,10)
-                    pH=14-pOH
-                    #print("pH =",pH)
-                    
-                #more moles acid than base   
-                elif molecomparison<0:
-                    Hcon=(-molecomparison)/((vol2+volume))
-                    #print(Hcon)
-                    pH=-math.log(Hcon,10)
-                    #print("pH =",pH)
-    #######################################################################################
-            if strength=="weak":
-                # X- +  H20  <->  HX + OH-
-                #  X- + H  <->  HX
-                molecomparison=(((volume)*intmolarity) - (((vol2)*molarity2)))
-                if molecomparison==(volume*intmolarity):
-                    #Kb=[OH-][HX]/[X-]   ->   [OH-]^2= Kb*[X-]
-                    OHcon=(kvalue*intmolarity)**0.5
-                    pOH=-math.log(OHcon,10)
-                    pH=14-pOH
-                    #print("With no titration, pH=",pH)
-
-                #pH @ equivalence point
-                elif molecomparison==0:
-                    #complete neutrilization. Now we have x moles of HX"
-                    cacidcon=(volume*intmolarity)/(volume+vol2)
-                    
-                    #HX  <->  H+  +  X-
-                    # Ka= [H+][X-]/[HX]
-                    # [H+]^2 = Ka*[HX]   -> [H+]= (Ka*[HX])^0.5
-                    Ka=(10**-14)/kvalue
-                    Hcon=(Ka*cacidcon)**0.5
-                    pH=-math.log(Hcon,10)
-                    #print("At the equivalence point, pH =",pH)
-
-                    #more moles acid than base
-                elif molecomparison>0:
-                    #X- +           H+ ->        HX    moles of HX = moles of H+ added.
-                #I  (vol*mol)       0             0
-                #I2  vol*mol      vol2*mol2       0
-                #C -vol2*mol2    -vol2*mol2     +vol2*mol2
-                #E  volmol-vol2mol2   0             vol2*mol2
-                    molHX=(vol2*molarity2)
-                    molX=(volume*intmolarity)-(vol2*molarity2)
-                    Xcon=molX/(volume+vol2)
-                    HXcon=molHX/(volume+vol2)
-                # HX <-> X- + H+
-                    #pH= pKa + log([X-]/[HX])
-                    pKa=-math.log(((10**-14)/kvalue),10)
-                    pH=pKa+ math.log(Xcon/HXcon)
-                    #print(" pH =",pH)
-                elif molecomparison<0:
-                    #X-+H+- ->  HX + H+    
-                    molH=(vol2*molarity2)-(volume*intmolarity)
-                    Hcon=molH/(volume+vol2)
-                    #Kb =  [OH-]*[HX]/[X-]
-                    pH=-math.log(Hcon,10) 
-                    #print(" pH =",pH)
+            pH=14-pH
         xcoord.append(vol2)
         ycoord.append(pH)
         if vol2==(test):
             print("pH=",pH)
-        vol2=vol2+(0.1/1000)
-        vol2=round(vol2,4)
+        vol2=vol2+(0.05/1000)
+        vol2=round(vol2,5)
         #print(vol2*1000)
 ############################
     #graph
@@ -236,14 +159,32 @@ while True:
     graph_window.resizable(width=FALSE, height=FALSE)
     canvus_1 = Canvas(graph_window,height=600,width=600,bg='white')
 #domain
-    xdom=(xcoord[len(xcoord)-1])*600*500
+    xdom=600/(xcoord[len(xcoord)-1])
     realx=[num*xdom for num in xcoord]
     epoint=volume*xdom
-    canvus_1.create_line(epoint,0,epoint,600)
+    #canvus_1.create_line(epoint,0,epoint,600)
     realy=[(600-(num*(600/14))) for num in ycoord]
     for i in range(0,(len(xcoord)-1)):
-        canvus_1.create_line(realx[i],realy[i],realx[i+1],realy[i+1])
+        if realy[i]<300:
+            canvus_1.create_line(realx[i],realy[i],realx[i+1],realy[i+1], fill="blue")
+        if realy[i]==300:
+            if titraty=="acid":
+                canvus_1.create_line(realx[i],realy[i],realx[i+1],realy[i+1], fill="blue")
+            if titraty=="base":
+                canvus_1.create_line(realx[i],realy[i],realx[i+1],realy[i+1], fill="red")
+        if realy[i]>300:
+            canvus_1.create_line(realx[i],realy[i],realx[i+1],realy[i+1], fill="red")
 ###################################################################################
+    #Equiv point circle:  at ex ey
+    try:
+        if titraty=="acid":
+            canvus_1.create_oval((ex*xdom)-4,(600-(ey*(600/14))-4),(ex*xdom)+4,(600-(ey*(600/14))+4),fill="black")
+        if titraty=="base":
+            canvus_1.create_oval((ex*xdom)-4,((ey*(600/14))-4),(ex*xdom)+4,((ey*(600/14))+4),fill="black")
+    except:
+        pass
+
+        
     #y axis
     #canvus_1.create_line((50),0,(50),600)
     #x axis
